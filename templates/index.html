@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+        content="AI-powered phishing URL detection tool. Enter any URL to instantly analyze if it is a phishing site or legitimate using our machine learning model." />
+  <meta name="keywords"
+        content="phishing detection, URL scanner, AI security, cybersecurity, machine learning" />
+  <meta name="author" content="AI Phishing Detector" />
+
+  <title>PhishGuard AI – Intelligent Phishing URL Detector</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet" />
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════════════
+       ANIMATED BACKGROUND
+  ══════════════════════════════════════════════ -->
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="bg-orb bg-orb--1" aria-hidden="true"></div>
+  <div class="bg-orb bg-orb--2" aria-hidden="true"></div>
+  <div class="bg-orb bg-orb--3" aria-hidden="true"></div>
+
+  <!-- ══════════════════════════════════════════════
+       HEADER / NAVBAR
+  ══════════════════════════════════════════════ -->
+  <header class="header" role="banner">
+    <nav class="nav container" aria-label="Main navigation">
+      <div class="nav__brand">
+        <span class="nav__logo" aria-hidden="true">🛡️</span>
+        <span class="nav__name">PhishGuard <span class="nav__name--ai">AI</span></span>
+      </div>
+      <div class="nav__badges">
+        <span class="badge badge--blue">Random Forest</span>
+        <span class="badge badge--green">95%+ Accuracy</span>
+        <span class="badge badge--purple">21 Features</span>
+      </div>
+    </nav>
+  </header>
+
+  <!-- ══════════════════════════════════════════════
+       HERO SECTION
+  ══════════════════════════════════════════════ -->
+  <main class="main container" id="main-content">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero__eyebrow">
+        <span class="pulse-dot" aria-hidden="true"></span>
+        AI Security Engine Active
+      </div>
+      <h1 class="hero__title" id="hero-title">
+        Detect Phishing URLs<br />
+        <span class="gradient-text">Instantly with AI</span>
+      </h1>
+      <p class="hero__subtitle">
+        Our machine learning model analyzes 21+ URL features to identify phishing
+        attacks with high accuracy. Protect yourself before clicking any suspicious link.
+      </p>
+
+      <!-- ── URL Input Card ── -->
+      <div class="scanner-card" role="region" aria-label="URL Scanner">
+        <div class="scanner-card__header">
+          <div class="scanner-card__icon" aria-hidden="true">🔍</div>
+          <div>
+            <div class="scanner-card__title">URL Threat Scanner</div>
+            <div class="scanner-card__sub">Powered by Random Forest ML Model</div>
+          </div>
+          <div class="scanner-card__dot" id="status-dot" aria-label="System status indicator"></div>
+        </div>
+
+        <form id="scan-form" novalidate aria-label="URL scanner form">
+          <div class="input-group" role="group" aria-label="URL input and scan">
+            <div class="input-wrapper">
+              <span class="input-icon" aria-hidden="true">🌐</span>
+              <input
+                type="text"
+                id="url-input"
+                class="url-input"
+                placeholder="Enter URL to scan  (e.g., https://example.com)"
+                autocomplete="off"
+                autocorrect="off"
+                autocapitalize="off"
+                spellcheck="false"
+                aria-label="URL to scan for phishing"
+                aria-describedby="input-hint"
+                maxlength="2048"
+              />
+              <button
+                type="button"
+                id="clear-btn"
+                class="clear-btn"
+                aria-label="Clear URL input"
+                title="Clear"
+                hidden
+              >✕</button>
+            </div>
+            <button
+              type="submit"
+              id="scan-btn"
+              class="scan-btn"
+              aria-label="Scan URL for phishing"
+            >
+              <span class="scan-btn__icon" aria-hidden="true">🔎</span>
+              <span class="scan-btn__text">Scan URL</span>
+            </button>
+          </div>
+          <div id="input-hint" class="input-hint">
+            Press Enter or click Scan URL to analyze the link
+          </div>
+          <div id="input-error" class="input-error" role="alert" aria-live="polite" hidden></div>
+        </form>
+
+        <!-- ── Quick Examples ── -->
+        <div class="quick-examples" aria-label="Quick example URLs">
+          <span class="quick-examples__label">Try:</span>
+          <button class="example-btn" id="ex-legit" data-url="https://www.google.com" type="button">
+            ✅ Legit URL
+          </button>
+          <button class="example-btn" id="ex-phish" data-url="http://paypal-verify-account-12345.tk/secure-login" type="button">
+            ⚠️ Phishing URL
+          </button>
+          <button class="example-btn" id="ex-ip" data-url="http://192.168.1.100/admin/login" type="button">
+            🔴 IP-based URL
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════
+         LOADING STATE
+    ══════════════════════════════════════════════ -->
+    <section id="loading-section" class="loading-section" hidden aria-live="polite" aria-label="Scanning in progress">
+      <div class="loading-card">
+        <div class="scanner-anim" aria-hidden="true">
+          <div class="scanner-ring scanner-ring--1"></div>
+          <div class="scanner-ring scanner-ring--2"></div>
+          <div class="scanner-ring scanner-ring--3"></div>
+          <div class="scanner-core">🔬</div>
+        </div>
+        <div class="loading-title">Analyzing URL…</div>
+        <div class="loading-steps" id="loading-steps" aria-label="Analysis progress">
+          <div class="loading-step loading-step--active" id="step-1">Extracting URL features</div>
+          <div class="loading-step" id="step-2">Running ML model inference</div>
+          <div class="loading-step" id="step-3">Calculating risk score</div>
+          <div class="loading-step" id="step-4">Generating recommendations</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════
+         RESULTS SECTION
+    ══════════════════════════════════════════════ -->
+    <section id="results-section" class="results-section" hidden
+             aria-live="polite" aria-label="Scan results" aria-atomic="true">
+
+      <!-- ── Verdict Banner ── -->
+      <div id="verdict-banner" class="verdict-banner" role="status">
+        <div class="verdict-banner__icon" id="verdict-icon" aria-hidden="true"></div>
+        <div class="verdict-banner__body">
+          <div class="verdict-banner__label">Verdict</div>
+          <div class="verdict-banner__result" id="verdict-text"></div>
+          <div class="verdict-banner__url" id="verdict-url"></div>
+        </div>
+        <div class="verdict-banner__risk" id="verdict-risk"></div>
+      </div>
+
+      <!-- ── Score Cards Row ── -->
+      <div class="score-grid" role="list" aria-label="Confidence scores">
+        <div class="score-card" role="listitem">
+          <div class="score-card__label">Confidence</div>
+          <div class="score-card__value" id="score-confidence">—</div>
+          <div class="score-card__bar">
+            <div class="score-card__fill" id="bar-confidence"></div>
+          </div>
+        </div>
+        <div class="score-card" role="listitem">
+          <div class="score-card__label">Phishing Probability</div>
+          <div class="score-card__value score-card__value--danger" id="score-phish">—</div>
+          <div class="score-card__bar">
+            <div class="score-card__fill score-card__fill--danger" id="bar-phish"></div>
+          </div>
+        </div>
+        <div class="score-card" role="listitem">
+          <div class="score-card__label">Legitimate Probability</div>
+          <div class="score-card__value score-card__value--safe" id="score-legit">—</div>
+          <div class="score-card__bar">
+            <div class="score-card__fill score-card__fill--safe" id="bar-legit"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Two-column layout: Analysis + Recommendation ── -->
+      <div class="detail-grid">
+
+        <!-- Feature Analysis -->
+        <div class="detail-card">
+          <div class="detail-card__header">
+            <span class="detail-card__icon" aria-hidden="true">🔬</span>
+            Feature Analysis
+          </div>
+          <ul class="feature-list" id="feature-list" aria-label="URL feature analysis results"></ul>
+        </div>
+
+        <!-- Recommendation -->
+        <div class="detail-card">
+          <div class="detail-card__header">
+            <span class="detail-card__icon" aria-hidden="true">💡</span>
+            Security Recommendation
+          </div>
+          <div class="recommendation" id="recommendation-text"></div>
+
+          <div class="detail-card__header" style="margin-top: 1.5rem;">
+            <span class="detail-card__icon" aria-hidden="true">📊</span>
+            Risk Meter
+          </div>
+          <div class="risk-meter" aria-label="Risk level meter">
+            <div class="risk-meter__track">
+              <div class="risk-meter__fill" id="risk-meter-fill"></div>
+              <div class="risk-meter__thumb" id="risk-meter-thumb"></div>
+            </div>
+            <div class="risk-meter__labels">
+              <span>Low</span><span>Medium</span><span>High</span>
+            </div>
+            <div class="risk-meter__value" id="risk-meter-value"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Scan Again ── -->
+      <div class="scan-again">
+        <button id="scan-again-btn" class="scan-again-btn" type="button"
+                aria-label="Scan another URL">
+          🔄 Scan Another URL
+        </button>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════
+         ERROR SECTION
+    ══════════════════════════════════════════════ -->
+    <section id="error-section" class="error-section" hidden
+             role="alert" aria-live="assertive">
+      <div class="error-card">
+        <div class="error-card__icon" aria-hidden="true">⚠️</div>
+        <div class="error-card__title">Analysis Failed</div>
+        <div class="error-card__message" id="error-message"></div>
+        <button id="retry-btn" class="retry-btn" type="button" aria-label="Try again">
+          Try Again
+        </button>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════
+         STATS SECTION
+    ══════════════════════════════════════════════ -->
+    <section class="stats-section" aria-label="Model statistics">
+      <h2 class="stats-section__title">Model Powered by Real ML</h2>
+      <div class="stats-grid" role="list">
+        <div class="stat-card" role="listitem">
+          <div class="stat-card__number" data-target="21">0</div>
+          <div class="stat-card__label">URL Features</div>
+        </div>
+        <div class="stat-card" role="listitem">
+          <div class="stat-card__number" data-target="200">0</div>
+          <div class="stat-card__label">Decision Trees</div>
+        </div>
+        <div class="stat-card" role="listitem">
+          <div class="stat-card__number" data-target="3000">0</div>
+          <div class="stat-card__label">Training Samples</div>
+        </div>
+        <div class="stat-card" role="listitem">
+          <div class="stat-card__number" data-target="95" data-suffix="%">0</div>
+          <div class="stat-card__label">Model Accuracy</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════
+         HOW IT WORKS SECTION
+    ══════════════════════════════════════════════ -->
+    <section class="how-section" aria-labelledby="how-title">
+      <h2 class="how-section__title" id="how-title">How PhishGuard AI Works</h2>
+      <div class="steps-grid" role="list">
+        <div class="step-card" role="listitem">
+          <div class="step-card__number" aria-hidden="true">01</div>
+          <div class="step-card__icon" aria-hidden="true">📎</div>
+          <div class="step-card__title">URL Submitted</div>
+          <div class="step-card__desc">You paste any suspicious or unknown URL into the scanner.</div>
+        </div>
+        <div class="step-card__arrow" aria-hidden="true">→</div>
+        <div class="step-card" role="listitem">
+          <div class="step-card__number" aria-hidden="true">02</div>
+          <div class="step-card__icon" aria-hidden="true">⚙️</div>
+          <div class="step-card__title">Feature Extraction</div>
+          <div class="step-card__desc">21 features are extracted including HTTPS, IP presence, keywords, and TLD.</div>
+        </div>
+        <div class="step-card__arrow" aria-hidden="true">→</div>
+        <div class="step-card" role="listitem">
+          <div class="step-card__number" aria-hidden="true">03</div>
+          <div class="step-card__icon" aria-hidden="true">🤖</div>
+          <div class="step-card__title">AI Inference</div>
+          <div class="step-card__desc">Random Forest model evaluates all features and outputs a prediction.</div>
+        </div>
+        <div class="step-card__arrow" aria-hidden="true">→</div>
+        <div class="step-card" role="listitem">
+          <div class="step-card__number" aria-hidden="true">04</div>
+          <div class="step-card__icon" aria-hidden="true">🛡️</div>
+          <div class="step-card__title">Results & Advice</div>
+          <div class="step-card__desc">You receive a verdict, confidence score, risk level, and action steps.</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ══════════════════════════════════════════════
+       FOOTER
+  ══════════════════════════════════════════════ -->
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer__brand">🛡️ PhishGuard AI</div>
+      <div class="footer__text">
+        Final Year Engineering Project · AI-Based Phishing Detection ·
+        Built with Python, Flask &amp; Scikit-learn
+      </div>
+      <div class="footer__disclaimer">
+        ⚠️ For educational purposes only. Always use professional security tools for production environments.
+      </div>
+    </div>
+  </footer>
+
+  <!-- ══════════════════════════════════════════════
+       JAVASCRIPT
+  ══════════════════════════════════════════════ -->
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

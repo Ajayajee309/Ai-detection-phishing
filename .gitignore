@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+*.pyo
+
+# Virtual Environment
+venv/
+env/
+.venv/
+ENV/
+
+# ML Model files (regenerate by training)
+# Uncomment if you want to exclude model binaries from git
+# model/model.pkl
+# model/scaler.pkl
+
+# Dataset (regenerate with generate_dataset.py)
+# dataset/phishing_dataset.csv
+
+# Flask
+instance/
+.webassets-cache
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Distribution
+dist/
+build/
+*.egg-info/
+
+# Environment variables
+.env
+.env.local
+*.env
+
+# OS
+.DS_Store
+desktop.ini
