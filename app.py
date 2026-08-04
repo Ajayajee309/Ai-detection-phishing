@@ -277,10 +277,13 @@ def predict():
 
     # ─── Check model is loaded ────────────────────────────────────
     if model is None or scaler is None:
-        return jsonify({
-            "success": False,
-            "error": "Model not loaded. Please train the model first."
-        }), 503
+        try:
+            load_model()
+        except FileNotFoundError:
+            return jsonify({
+                "success": False,
+                "error": "Model not loaded. Please train the model first."
+            }), 503
 
     try:
         # ─── Extract features ─────────────────────────────────────
